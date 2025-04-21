@@ -14,29 +14,41 @@ namespace BigNumbers
         Negarive,
     }
 
-    internal class BigIntContrainer<T> where T : struct
+    public static class Utitility
+    {
+        public static Sign SignOf(int value) => value >= 0 ? Sign.Positive : Sign.Negarive;
+
+    }
+
+
+    internal class BigIntContrainer<T> where T : struct, INumber<T>
     {
         public BigIntContrainer():this(1)
         {
         }
 
-        public BigIntContrainer(int capacity)
+        public BigIntContrainer(int capacity, Sign sign = Sign.Positive)
         {
-            _numLen = 1;
+            _sign = sign;
+            Length = 1;
             _num = new T[capacity];
             _num[0] = default;
-            _sign = Sign.Positive;
         }
 
         public BigIntContrainer(BigIntContrainer<T> contrainer)
         {
-            _numLen = contrainer.Length;
-            _num = new T[contrainer.Length];
-            Array.Copy(contrainer.NumArray, _num, contrainer.Length);
             _sign = contrainer.Sign;
+            Length = contrainer.Length;
+            _num = new T[contrainer.Length];
+            Array.Copy(contrainer.Value, _num, contrainer.Length);
         }
 
-        public int Length => _numLen;
+        public int Length
+        {
+            get => _numLen;
+            set => _numLen = value;
+        }
+
         public int Capacity
         {
             get => _num.Length;
@@ -49,7 +61,9 @@ namespace BigNumbers
             }
         }
         public Sign Sign => _sign;
-        public T[] NumArray => _num;
+        public T[] Value => _num;
+
+        public bool IsZero => Value[Length - 1] == default;
 
         private void Extend(int newCapacity)
         {
@@ -60,6 +74,7 @@ namespace BigNumbers
             Array.Copy(_num, num, Length);
             _num = num;
         }
+
 
 
 
