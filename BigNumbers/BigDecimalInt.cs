@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BigNumbers
 {
-    public sealed class BigDecimalInt
+    public sealed class BigDecimalInt //: IEquatable<BigDecimalInt>, IComparable<BigDecimalInt>, INumber<BigDecimalInt>
     {
         public const uint Base = 1_000_000_000;
 
@@ -38,6 +39,11 @@ namespace BigNumbers
 
             _contrainer.ResetLength();
         }
+
+        private static int AbsCompare(BigDecimalInt left, BigDecimalInt right)
+            => BigIntContrainer<uint>.AbsCompare(left._contrainer, right._contrainer);
+
+
 
         private BigIntContrainer<uint> _contrainer;
     }

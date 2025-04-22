@@ -53,10 +53,7 @@ namespace BigNumbers
             Array.Copy(contrainer.Value, _num, contrainer.Length);
         }
 
-        public int Length
-        {
-            get => _numLen;
-        }
+        public int Length => _numLen;
 
         public int Capacity
         {
@@ -72,7 +69,7 @@ namespace BigNumbers
         public Sign Sign => _sign;
         public T[] Value => _num;
 
-        public bool IsZero => Value[Length - 1] == default;
+        public bool IsZero => Length == 1 && Value[0] == default;
 
         public int ResetLength()
         {
@@ -98,7 +95,25 @@ namespace BigNumbers
             _num = num;
         }
 
+        public static int AbsCompare(BigIntContrainer<T> left, BigIntContrainer<T> right)
+        {
+            if (left.Length > right.Length)
+                return 1;
 
+            if (left.Length < right.Length)
+                return -1;
+
+            for (int i = left.Length - 1; i >= 0; i--)
+            {
+                int c = left.Value[i].CompareTo(right.Value[i]);
+                if (c != 0)
+                {
+                    return c;
+                }
+            }
+
+            return 0;
+        }
 
 
 
