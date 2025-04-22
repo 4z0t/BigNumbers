@@ -20,17 +20,27 @@ namespace BigNumbers
 
     }
 
+    internal readonly struct DivResult
+    {
+        public readonly uint reminder;
+        public readonly uint quotient;
+
+        public DivResult(uint dividend, uint divisor)
+        {
+            (quotient, reminder) = Math.DivRem(dividend, divisor);
+        }
+    }
 
     internal class BigIntContrainer<T> where T : struct, INumber<T>
     {
-        public BigIntContrainer():this(1)
+        public BigIntContrainer() : this(1)
         {
         }
 
         public BigIntContrainer(int capacity, Sign sign = Sign.Positive)
         {
             _sign = sign;
-            Length = 1;
+            _numLen = 1;
             _num = new T[capacity];
             _num[0] = default;
         }
@@ -38,7 +48,7 @@ namespace BigNumbers
         public BigIntContrainer(BigIntContrainer<T> contrainer)
         {
             _sign = contrainer.Sign;
-            Length = contrainer.Length;
+            _numLen = contrainer.Length;
             _num = new T[contrainer.Length];
             Array.Copy(contrainer.Value, _num, contrainer.Length);
         }
@@ -46,7 +56,6 @@ namespace BigNumbers
         public int Length
         {
             get => _numLen;
-            set => _numLen = value;
         }
 
         public int Capacity
@@ -65,15 +74,31 @@ namespace BigNumbers
 
         public bool IsZero => Value[Length - 1] == default;
 
+        public int ResetLength()
+        {
+            for (int i = Capacity - 1; i >= 0; --i)
+            {
+                if (_num[i] == default)
+                {
+                    _numLen = i + 1;
+                    break;
+                }
+            }
+            return _numLen;
+        }
+
+
         private void Extend(int newCapacity)
         {
             if (newCapacity <= Capacity)
-                throw new ArgumentException(nameof(newCapacity)+" must be larger than current one");
+                throw new ArgumentException(nameof(newCapacity) + " must be larger than current one");
 
             T[] num = new T[newCapacity];
             Array.Copy(_num, num, Length);
             _num = num;
         }
+
+
 
 
 

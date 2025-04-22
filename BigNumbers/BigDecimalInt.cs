@@ -8,46 +8,37 @@ namespace BigNumbers
 {
     public sealed class BigDecimalInt
     {
-        public const int Base = 1_000_000_000;
+        public const uint Base = 1_000_000_000;
 
         public BigDecimalInt()
         {
-            _contrainer = new BigIntContrainer<int>();
+            _contrainer = new BigIntContrainer<uint>();
         }
 
         public BigDecimalInt(int value)
         {
-            Sign s = Utitility.SignOf(value);
-            DivResult r = new(Math.Abs(value), Base);
-            if(r.quotient == 0)
-            {
-                _contrainer = new BigIntContrainer<int>(1, s);
-                _contrainer.Value[0] = r.reminder;
-            }
-            else
-            {
-                _contrainer = new BigIntContrainer<int>(2, s)
-                {
-                    Length = 2
-                };
+            DivResult r = new((uint)Math.Abs(value), Base);
 
-                _contrainer.Value[0] = r.reminder;
-                _contrainer.Value[1] = r.quotient;
-            }
+            _contrainer = new BigIntContrainer<uint>(2, Utitility.SignOf(value));
+
+            _contrainer.Value[0] = r.reminder;
+            _contrainer.Value[1] = r.quotient;
+
+            _contrainer.ResetLength();
         }
 
-
-        private readonly struct DivResult
+        public BigDecimalInt(uint value)
         {
-            public readonly int reminder;
-            public readonly int quotient;
+            DivResult r = new(value, Base);
 
-            public DivResult(int dividend, int divisor)
-            {
-                quotient = Math.DivRem(dividend, divisor, out reminder);
-            }
+            _contrainer = new BigIntContrainer<uint>(2);
+
+            _contrainer.Value[0] = r.reminder;
+            _contrainer.Value[1] = r.quotient;
+
+            _contrainer.ResetLength();
         }
 
-        private BigIntContrainer<int> _contrainer;
+        private BigIntContrainer<uint> _contrainer;
     }
 }
