@@ -11,12 +11,12 @@ namespace BigNumbers
     {
         None,
         Positive,
-        Negarive,
+        Negative,
     }
 
     public static class Utitility
     {
-        public static Sign SignOf(int value) => value >= 0 ? Sign.Positive : Sign.Negarive;
+        public static Sign SignOf(int value) => value >= 0 ? Sign.Positive : Sign.Negative;
 
     }
 
