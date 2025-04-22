@@ -97,11 +97,10 @@ namespace BigNumbers
 
         public static int AbsCompare(BigIntContrainer<T> left, BigIntContrainer<T> right)
         {
-            if (left.Length > right.Length)
-                return 1;
+            int l = left.Length.CompareTo(right.Length);
 
-            if (left.Length < right.Length)
-                return -1;
+            if (l != 0)
+                return l;
 
             for (int i = left.Length - 1; i >= 0; i--)
             {
