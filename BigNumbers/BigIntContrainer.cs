@@ -75,7 +75,7 @@ namespace BigNumbers
         {
             for (int i = Capacity - 1; i >= 0; --i)
             {
-                if (_num[i] == default)
+                if (_num[i] != default)
                 {
                     _numLen = i + 1;
                     break;
