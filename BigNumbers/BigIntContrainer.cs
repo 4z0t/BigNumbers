@@ -84,17 +84,6 @@ namespace BigNumbers
             return _numLen;
         }
 
-
-        private void Extend(int newCapacity)
-        {
-            if (newCapacity <= Capacity)
-                throw new ArgumentException(nameof(newCapacity) + " must be larger than current one");
-
-            T[] num = new T[newCapacity];
-            Array.Copy(_num, num, Length);
-            _num = num;
-        }
-
         public static int AbsCompare(BigIntContrainer<T> left, BigIntContrainer<T> right)
         {
             int l = left.Length.CompareTo(right.Length);
@@ -112,6 +101,16 @@ namespace BigNumbers
             }
 
             return 0;
+        }
+
+        private void Extend(int newCapacity)
+        {
+            if (newCapacity <= Capacity)
+                throw new ArgumentException(nameof(newCapacity) + " must be larger than current one");
+
+            T[] num = new T[newCapacity];
+            Array.Copy(_num, num, Length);
+            _num = num;
         }
 
 
