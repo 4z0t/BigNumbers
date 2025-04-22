@@ -60,10 +60,7 @@ namespace BigNumbers
 
             int c = AbsCompare(this, other);
 
-            if (r == Sign.Positive)
-                return c;
-
-            return -c;
+            return r == Sign.Positive ? c : -c;
         }
 
         private BigIntContrainer<uint> _contrainer;
