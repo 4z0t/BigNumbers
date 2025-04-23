@@ -43,7 +43,7 @@ namespace BigNumbers
             _contrainer = new BigIntContrainer<uint>(value, sign);
         }
 
-        private BigDecimalInt AbsAdd(BigDecimalInt other, Sign sign)
+        private BigDecimalInt AbsAdd(BigDecimalInt other)
         {
             int len1 = _contrainer.Length;
             int len2 = other._contrainer.Length;
@@ -88,10 +88,10 @@ namespace BigNumbers
             }
 
 
-            return new BigDecimalInt(newValue, sign);
+            return new BigDecimalInt(newValue, _contrainer.Sign);
         }
 
-        private BigDecimalInt AbsSub(BigDecimalInt other, Sign sign)
+        private BigDecimalInt AbsSub(BigDecimalInt other)
         {
             int len1 = _contrainer.Length;
             int len2 = other._contrainer.Length;
@@ -125,7 +125,7 @@ namespace BigNumbers
                    newValue[i] += Base - small._contrainer[i];
                 }
 
-            return new BigDecimalInt(newValue, sign);
+            return new BigDecimalInt(newValue, c > 0 ? _contrainer.Sign : Utitility.InvertSign(_contrainer.Sign));
         }
 
         private BigDecimalInt AbsMult(BigDecimalInt other, Sign sign)
@@ -154,8 +154,30 @@ namespace BigNumbers
 
 
         public static bool operator ==(BigDecimalInt left, BigDecimalInt right) => left.Equals(right);
-
         public static bool operator !=(BigDecimalInt left, BigDecimalInt right) => !(left == right);
+        public static BigDecimalInt operator +(BigDecimalInt left, BigDecimalInt right)
+        {
+            if (left._contrainer.Sign == right._contrainer.Sign)
+            {
+                return left.AbsAdd(right);
+            }
+            else
+            {
+                return left.AbsSub(right);
+            }
+        }
+
+        public static BigDecimalInt operator -(BigDecimalInt left, BigDecimalInt right)
+        {
+            if (left._contrainer.Sign == right._contrainer.Sign)
+            {
+                return left.AbsSub(right);
+            }
+            else
+            {
+                return left.AbsAdd(right);
+            }
+        }
 
         public override readonly string ToString()
         {
