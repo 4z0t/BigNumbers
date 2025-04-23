@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BigNumbers
 {
-    public struct BigDecimalInt : IEquatable<BigDecimalInt>, IComparable<BigDecimalInt>//, INumber<BigDecimalInt>
+    public readonly struct BigDecimalInt : IEquatable<BigDecimalInt>, IComparable<BigDecimalInt>//, INumber<BigDecimalInt>
     {
         public static uint Pow10(int n)
         {
@@ -73,6 +73,8 @@ namespace BigNumbers
         {
             _contrainer = new BigIntContrainer<uint>(value, sign);
         }
+
+        public readonly bool IsZero => _contrainer.IsZero;
 
         private readonly BigDecimalInt AbsAdd(BigDecimalInt other)
         {
