@@ -31,5 +31,13 @@ namespace BigNumbersTests
         {
             Assert.Equal(new BigDecimalInt(left) - new BigDecimalInt(right), new BigDecimalInt(result));
         }
+
+        [Theory]
+        [InlineData(0, 0, true)]
+        [InlineData(0, 1, false)]
+        public void TestEqual(int left, int right, bool result)
+        {
+            Assert.Equal(left == right, result);
+        }
     }
 }
