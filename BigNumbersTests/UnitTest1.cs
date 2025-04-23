@@ -73,10 +73,22 @@ namespace BigNumbersTests
 
         [Theory]
         [InlineData(4, 2, 2)]
+        [InlineData(-4, 2, -2)]
+        [InlineData(4, -2, -2)]
+        [InlineData(-4, -2, 2)]
         [InlineData(1_000_000_000, 10, 100_000_000)]
         public void DivTestLong(long left, long right, long result)
         {
             Assert.Equal(new BigDecimalInt(left) / new BigDecimalInt(right), new BigDecimalInt(result));
+        }
+
+        [Theory]
+        [InlineData(4, 2, 0)]
+        [InlineData(1_000_000_000, 10, 0)]
+        [InlineData(1_000_000_000, 999_999_999, 1)]
+        public void RemTestLong(long left, long right, long result)
+        {
+            Assert.Equal(new BigDecimalInt(left) % new BigDecimalInt(right), new BigDecimalInt(result));
         }
 
         [Theory]

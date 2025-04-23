@@ -216,6 +216,9 @@ namespace BigNumbers
         public static BigDecimalInt operator *(BigDecimalInt left, BigDecimalInt right)
             => left.AbsMult(right, Utitility.MultSigns(left._contrainer.Sign, right._contrainer.Sign));
 
+        public static BigDecimalInt operator -(BigDecimalInt value)
+            => new BigDecimalInt(value._contrainer.CopyData(), Utitility.InvertSign(value._contrainer.Sign));
+
         public (BigDecimalInt Quotiont, BigDecimalInt Reminder) DivRem(BigDecimalInt other)
         {
             if (other._contrainer.IsZero)
@@ -248,7 +251,7 @@ namespace BigNumbers
                 }
             }
 
-            return (result, numerator);
+            return (_contrainer.Sign == other._contrainer.Sign ? result : -result, numerator);
         }
 
         public static BigDecimalInt operator /(BigDecimalInt left, BigDecimalInt right)
