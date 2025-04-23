@@ -169,9 +169,9 @@ namespace BigNumbers
             {
                 for (int j = 0; j < len2; j++)
                 {
-                    if (_contrainer[i] != 0 && other._contrainer[i] != 0)
+                    if (_contrainer[i] != 0 && other._contrainer[j] != 0)
                     {
-                        ulong mult = (ulong)_contrainer[i] * (ulong)other._contrainer[i];
+                        ulong mult = (ulong)_contrainer[i] * (ulong)other._contrainer[j];
                         var (q, r) = Math.DivRem(mult, Base);
 
                         newValue[i + j] += (uint)r;
@@ -330,6 +330,6 @@ namespace BigNumbers
             : new BigDecimalInt(value._contrainer.CopyData(), Sign.Positive);
 
 
-        private BigIntContrainer<uint> _contrainer;
+        private readonly BigIntContrainer<uint> _contrainer;
     }
 }
