@@ -93,9 +93,6 @@ namespace BigNumbers
 
         private readonly BigDecimalInt AbsSub(BigDecimalInt other)
         {
-            int len1 = _contrainer.Length;
-            int len2 = other._contrainer.Length;
-
             int c = AbsCompare(this, other);
             if (c == 0)
             {
@@ -216,5 +213,10 @@ namespace BigNumbers
         }
 
         private BigIntContrainer<uint> _contrainer;
+
+        public override readonly bool Equals(object obj)
+        {
+            return obj is BigDecimalInt i && Equals(i);
+        }
     }
 }
