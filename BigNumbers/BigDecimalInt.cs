@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -107,7 +108,7 @@ namespace BigNumbers
             int c = AbsCompare(this, other);
             if (c == 0)
             {
-                return new BigDecimalInt();
+                return Zero;
             }
 
             BigDecimalInt large = c > 0 ? this : other;
@@ -138,6 +139,9 @@ namespace BigNumbers
 
         private readonly BigDecimalInt AbsMult(BigDecimalInt other, Sign sign)
         {
+            if (_contrainer.IsZero || other._contrainer.IsZero)
+                return Zero;
+
             int len1 = _contrainer.Length;
             int len2 = other._contrainer.Length;
             uint[] newValue = new uint[len1 + len2];

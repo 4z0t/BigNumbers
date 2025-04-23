@@ -16,6 +16,8 @@ namespace BigNumbersTests
         [InlineData(2, 3, 5)]
         [InlineData(-2, 3, 1)]
         [InlineData(-2, -3, -5)]
+        [InlineData(3, -3, 0)]
+        [InlineData(-2, 2, 0)]
         [InlineData(2, -3, -1)]
         [InlineData(1, 999_999_999, 1_000_000_000)]
         public void AddTest(int left, int right, int result)
@@ -28,6 +30,8 @@ namespace BigNumbersTests
         [InlineData(-2, 3, -5)]
         [InlineData(-2, -3, 1)]
         [InlineData(2, -3, 5)]
+        [InlineData(2, 2, 0)]
+        [InlineData(-3, -3, 0)]
         [InlineData(1_000_000_000, 999_999_999, 1)]
         [InlineData(999_999_999, 1_000_000_000, -1)]
         public void SubTest(int left, int right, int result)
@@ -44,6 +48,8 @@ namespace BigNumbersTests
         }
 
         [Theory]
+        [InlineData(0, -1, 0)]
+        [InlineData(-1, 0, 0)]
         [InlineData(2, 3, 6)]
         [InlineData(-2, 3, -6)]
         [InlineData(-2, -3, 6)]
@@ -55,6 +61,7 @@ namespace BigNumbersTests
 
         [Theory]
         [InlineData(999_999_999, 999_999_999, 999_999_998_000_000_001)]
+        [InlineData(999_999_999, -999_999_999, -999_999_998_000_000_001)]
         public void MultTestLong(long left, long right, long result)
         {
             Assert.Equal(new BigDecimalInt(left) * new BigDecimalInt(right), new BigDecimalInt(result));
