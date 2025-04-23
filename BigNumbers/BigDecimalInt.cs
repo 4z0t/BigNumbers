@@ -7,37 +7,29 @@ using System.Threading.Tasks;
 
 namespace BigNumbers
 {
-    public sealed class BigDecimalInt : IEquatable<BigDecimalInt>, IComparable<BigDecimalInt>//, INumber<BigDecimalInt>
+    public struct BigDecimalInt : IEquatable<BigDecimalInt>, IComparable<BigDecimalInt>//, INumber<BigDecimalInt>
     {
         public const uint Base = 1_000_000_000;
 
+        public static readonly BigDecimalInt Zero = new BigDecimalInt([0], Sign.Positive);
+
         public BigDecimalInt()
         {
-            _contrainer = new BigIntContrainer<uint>();
+            _contrainer = Zero._contrainer;
         }
 
         public BigDecimalInt(int value)
         {
             DivResult r = new((uint)Math.Abs(value), Base);
 
-            _contrainer = new BigIntContrainer<uint>(2, Utitility.SignOf(value));
-
-            _contrainer.Value[0] = r.reminder;
-            _contrainer.Value[1] = r.quotient;
-
-            _contrainer.ResetLength();
+            _contrainer = new BigIntContrainer<uint>([r.reminder, r.quotient], Utitility.SignOf(value));
         }
 
         public BigDecimalInt(uint value)
         {
             DivResult r = new(value, Base);
 
-            _contrainer = new BigIntContrainer<uint>(2);
-
-            _contrainer.Value[0] = r.reminder;
-            _contrainer.Value[1] = r.quotient;
-
-            _contrainer.ResetLength();
+            _contrainer = new BigIntContrainer<uint>([r.reminder, r.quotient], Sign.Positive);
         }
 
         public BigDecimalInt(BigDecimalInt other)
@@ -45,9 +37,9 @@ namespace BigNumbers
             _contrainer = new BigIntContrainer<uint>(other._contrainer);
         }
 
-        private BigDecimalInt(int capacity, Sign sign)
+        private BigDecimalInt(uint[] value, Sign sign)
         {
-            _contrainer = new BigIntContrainer<uint>(capacity, sign);
+            _contrainer = new BigIntContrainer<uint>(value, sign);
         }
 
         private BigDecimalInt AbsAdd(BigDecimalInt other, Sign sign)
@@ -55,17 +47,17 @@ namespace BigNumbers
             int len1 = _contrainer.Length;
             int len2 = other._contrainer.Length;
 
-            BigDecimalInt result = new BigDecimalInt(Math.Max(len1, len2) + 1, sign);
+            uint[] newValue = new uint[Math.Max(len1, len2) + 1];
             BigDecimalInt large = len1 > len2 ? this : other;
             BigDecimalInt small = len1 > len2 ? other : this;
 
             for (int i = 0; i < large._contrainer.Length; i++)
             {
-                uint n1 = large._contrainer.Value[i];
+                uint n1 = large._contrainer[i];
 
                 if (i < small._contrainer.Length)
                 {
-                    uint n2 = small._contrainer.Value[i];
+                    uint n2 = small._contrainer[i];
                     uint s = n1 + n2;
 
                     if (s == 0)
@@ -73,13 +65,13 @@ namespace BigNumbers
 
                     DivResult d = new(s, Base);
 
-                    result._contrainer.Value[i] += d.reminder;
-                    result._contrainer.Value[i + 1] += d.quotient;
+                    newValue[i] += d.reminder;
+                    newValue[i + 1] += d.quotient;
 
-                    d = new DivResult(result._contrainer.Value[i], Base);
+                    d = new DivResult(newValue[i], Base);
 
-                    result._contrainer.Value[i] = d.reminder;
-                    result._contrainer.Value[i + 1] += d.quotient;
+                    newValue[i] = d.reminder;
+                    newValue[i + 1] += d.quotient;
                 }
                 else
                 {
@@ -87,16 +79,15 @@ namespace BigNumbers
                         continue;
 
 
-                    DivResult d = new(result._contrainer.Value[i] + n1, Base);
+                    DivResult d = new(newValue[i] + n1, Base);
 
-                    result._contrainer.Value[i] = d.reminder;
-                    result._contrainer.Value[i + 1] += d.quotient;
+                    newValue[i] = d.reminder;
+                    newValue[i + 1] += d.quotient;
                 }
             }
 
 
-            result._contrainer.ResetLength();
-            return result;
+            return new BigDecimalInt(newValue, sign);
         }
 
         private BigDecimalInt AbsSub(BigDecimalInt other, Sign sign)
@@ -112,40 +103,76 @@ namespace BigNumbers
 
             BigDecimalInt large = c > 0 ? this : other;
             BigDecimalInt small = c > 0 ? other : this;
-            BigDecimalInt result = new(large);
+            uint[] newValue = large._contrainer.CopyData();
 
             for (int i = 0; i < small._contrainer.Length; i++)
-                if (result._contrainer.Value[i] >= small._contrainer.Value[i])
+                if (newValue[i] >= small._contrainer[i])
                 {
-                    result._contrainer.Value[i] -= small._contrainer.Value[i];
+                    newValue[i] -= small._contrainer[i];
                 }
                 else
                 {
                     int j = i + 1;
-                    while (result._contrainer.Value[j] == 0)
+                    while (newValue[j] == 0)
                     {
-                        result._contrainer.Value[j] = Base - 1;
+                        newValue[j] = Base - 1;
                         j++;
                         if (j == small._contrainer.Length)
                             break;
                     }
-                    result._contrainer.Value[j] -= 1;
-                    result._contrainer.Value[i] += Base - small._contrainer.Value[i];
+                    newValue[j] -= 1;
+                   newValue[i] += Base - small._contrainer[i];
                 }
 
-            result._contrainer.ResetLength();
-            return result;
+            return new BigDecimalInt(newValue, sign);
+        }
+
+        private BigDecimalInt AbsMult(BigDecimalInt other, Sign sign)
+        {
+            int len1 = _contrainer.Length;
+            int len2 = other._contrainer.Length;
+            uint[] newValue = new uint[len1 * len2];
+
+            for (int i = 0; i < len1; i++)
+            {
+                for (int j = 0; j < len2; j++)
+                {
+                    if (_contrainer[i] != 0 && other._contrainer[i] != 0)
+                    {
+                        ulong mult = (ulong)_contrainer[i] * (ulong)other._contrainer[i];
+                        var (q, r) = Math.DivRem(mult, Base);
+
+                        newValue[i + j] += (uint)r;
+                        newValue[i + j + 1] += (uint)q + (uint)r / Base;
+                        newValue[i + j] %= Base;
+                    }
+                }
+            }
+            return new BigDecimalInt(newValue, sign);
+        }
+
+        public override readonly string ToString()
+        {
+            StringBuilder builder = new(_contrainer.Length + 1);
+            if (_contrainer.Sign == Sign.Negative)
+                builder.Append('-');
+
+            builder.Append(_contrainer[_contrainer.Length - 1]);
+            for (int i = _contrainer.Length - 2; i >= 0; i--)
+            {
+                builder.Append(_contrainer[i].ToString().PadLeft(9, '0'));
+            }
+
+            return builder.ToString();
         }
 
         private static int AbsCompare(BigDecimalInt left, BigDecimalInt right)
             => BigIntContrainer<uint>.AbsCompare(left._contrainer, right._contrainer);
 
-        public bool Equals(BigDecimalInt? other) => CompareTo(other) == 0;
+        public bool Equals(BigDecimalInt other) => CompareTo(other) == 0;
 
-        public int CompareTo(BigDecimalInt? other)
+        public int CompareTo(BigDecimalInt other)
         {
-            ArgumentNullException.ThrowIfNull(other);
-
             Sign r = other._contrainer.Sign;
             Sign l = _contrainer.Sign;
 

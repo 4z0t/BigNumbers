@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -33,47 +34,12 @@ namespace BigNumbers
 
     internal class BigIntContrainer<T> where T : struct, INumber<T>
     {
-        public BigIntContrainer() : this(1)
-        {
-        }
-
-        public BigIntContrainer(int capacity, Sign sign = Sign.Positive)
+        public BigIntContrainer(T[] value, Sign sign)
         {
             _sign = sign;
+            _num = value;
             _numLen = 1;
-            _num = new T[capacity];
-            _num[0] = default;
-        }
-
-        public BigIntContrainer(BigIntContrainer<T> contrainer)
-        {
-            _sign = contrainer.Sign;
-            _numLen = contrainer.Length;
-            _num = new T[contrainer.Length];
-            Array.Copy(contrainer.Value, _num, contrainer.Length);
-        }
-
-        public int Length => _numLen;
-
-        public int Capacity
-        {
-            get => _num.Length;
-            set
-            {
-                if (_num.Length >= value)
-                    return;
-
-                Extend(value);
-            }
-        }
-        public Sign Sign => _sign;
-        public T[] Value => _num;
-
-        public bool IsZero => Length == 1 && Value[0] == default;
-
-        public int ResetLength()
-        {
-            for (int i = Capacity - 1; i >= 0; --i)
+            for (int i = _num.Length - 1; i >= 0; --i)
             {
                 if (_num[i] != default)
                 {
@@ -81,8 +47,21 @@ namespace BigNumbers
                     break;
                 }
             }
-            return _numLen;
         }
+
+        public BigIntContrainer(BigIntContrainer<T> contrainer)
+        {
+            _sign = contrainer.Sign;
+            _numLen = contrainer.Length;
+            _num = contrainer.CopyData();
+        }
+
+        public int Length => _numLen;
+        public int Capacity => _num.Length;
+        public Sign Sign => _sign;
+        public T this[int index] => _num[index];
+
+        public bool IsZero => Length == 1 && _num[0] == default;
 
         public static int AbsCompare(BigIntContrainer<T> left, BigIntContrainer<T> right)
         {
@@ -93,7 +72,7 @@ namespace BigNumbers
 
             for (int i = left.Length - 1; i >= 0; i--)
             {
-                int c = left.Value[i].CompareTo(right.Value[i]);
+                int c = left._num[i].CompareTo(right._num[i]);
                 if (c != 0)
                 {
                     return c;
@@ -103,21 +82,15 @@ namespace BigNumbers
             return 0;
         }
 
-        private void Extend(int newCapacity)
+        public T[] CopyData()
         {
-            if (newCapacity <= Capacity)
-                throw new ArgumentException(nameof(newCapacity) + " must be larger than current one");
-
-            T[] num = new T[newCapacity];
-            Array.Copy(_num, num, Length);
-            _num = num;
+            T[] data = new T[Length];
+            Array.Copy(_num, data, Length);
+            return data;
         }
 
-
-
-
-        private T[] _num;
-        private int _numLen;
-        private Sign _sign;
+        private readonly T[] _num;
+        private readonly int _numLen;
+        private readonly Sign _sign;
     }
 }
