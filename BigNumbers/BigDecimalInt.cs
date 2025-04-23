@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -150,6 +151,11 @@ namespace BigNumbers
             }
             return new BigDecimalInt(newValue, sign);
         }
+
+
+        public static bool operator ==(BigDecimalInt left, BigDecimalInt right) => left.Equals(right);
+
+        public static bool operator !=(BigDecimalInt left, BigDecimalInt right) => !(left == right);
 
         public override readonly string ToString()
         {
