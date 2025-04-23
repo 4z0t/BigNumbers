@@ -13,6 +13,7 @@ namespace BigNumbers
         public const uint Base = 1_000_000_000;
 
         public static readonly BigDecimalInt Zero = new BigDecimalInt([0], Sign.Positive);
+        public static readonly BigDecimalInt One = new BigDecimalInt([1], Sign.Positive);
 
         public BigDecimalInt()
         {

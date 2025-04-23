@@ -17,6 +17,7 @@ namespace BigNumbersTests
         [InlineData(-2, 3, 1)]
         [InlineData(-2, -3, -5)]
         [InlineData(2, -3, -1)]
+        [InlineData(1, 999_999_999, 1_000_000_000)]
         public void AddTest(int left, int right, int result)
         {
             Assert.Equal(new BigDecimalInt(left)+ new BigDecimalInt(right), new BigDecimalInt(result));
@@ -27,6 +28,8 @@ namespace BigNumbersTests
         [InlineData(-2, 3, -5)]
         [InlineData(-2, -3, 1)]
         [InlineData(2, -3, 5)]
+        [InlineData(1_000_000_000, 999_999_999, 1)]
+        [InlineData(999_999_999, 1_000_000_000, -1)]
         public void SubTest(int left, int right, int result)
         {
             Assert.Equal(new BigDecimalInt(left) - new BigDecimalInt(right), new BigDecimalInt(result));
@@ -56,5 +59,7 @@ namespace BigNumbersTests
         {
             Assert.Equal(new BigDecimalInt(left) * new BigDecimalInt(right), new BigDecimalInt(result));
         }
+
+
     }
 }
