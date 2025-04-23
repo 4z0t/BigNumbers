@@ -71,6 +71,24 @@ namespace BigNumbersTests
             Assert.Equal(new BigDecimalInt(left) * new BigDecimalInt(right), new BigDecimalInt(result));
         }
 
+        [Theory]
+        [InlineData(4, 2, 2)]
+        [InlineData(1_000_000_000, 10, 100_000_000)]
+        public void DivTestLong(long left, long right, long result)
+        {
+            Assert.Equal(new BigDecimalInt(left) / new BigDecimalInt(right), new BigDecimalInt(result));
+        }
+
+        [Theory]
+        [InlineData(1, 2, 100)]
+        [InlineData(1_000, 0, 1_000)]
+        [InlineData(1, 10, 10_000_000_000)]
+        public void DecimalShiftTest(int value, int shift, long result)
+        {
+            Assert.Equal(new BigDecimalInt(value).DecimalShift(shift), new BigDecimalInt(result));
+        }
+
+
 
     }
 }

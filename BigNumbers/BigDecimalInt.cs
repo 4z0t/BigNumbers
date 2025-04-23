@@ -223,7 +223,7 @@ namespace BigNumbers
 
             BigDecimalInt numerator = Abs(this);
 
-            BigDecimalInt result = One;
+            BigDecimalInt result = Zero;
 
             while(true)
             {
@@ -232,7 +232,7 @@ namespace BigNumbers
                     break;
 
                 BigDecimalInt step = One;
-                int dist = numerator.Distance(divider) - 1;
+                int dist = numerator.Distance(divider);
                 while(numerator >= divider.DecimalShift(dist))
                 {
                     dist++;
