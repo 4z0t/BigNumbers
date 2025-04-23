@@ -129,7 +129,7 @@ namespace BigNumbers
         {
             int len1 = _contrainer.Length;
             int len2 = other._contrainer.Length;
-            uint[] newValue = new uint[len1 * len2];
+            uint[] newValue = new uint[len1 + len2];
 
             for (int i = 0; i < len1; i++)
             {

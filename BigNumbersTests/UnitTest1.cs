@@ -39,5 +39,15 @@ namespace BigNumbersTests
         {
             Assert.Equal(left == right, result);
         }
+
+        [Theory]
+        [InlineData(2, 3, 6)]
+        [InlineData(-2, 3, -6)]
+        [InlineData(-2, -3, 6)]
+        [InlineData(2, -3, -6)]
+        public void MultTest(int left, int right, int result)
+        {
+            Assert.Equal(new BigDecimalInt(left) * new BigDecimalInt(right), new BigDecimalInt(result));
+        }
     }
 }
