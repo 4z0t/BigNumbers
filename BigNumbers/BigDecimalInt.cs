@@ -43,7 +43,7 @@ namespace BigNumbers
             _contrainer = new BigIntContrainer<uint>(value, sign);
         }
 
-        private BigDecimalInt AbsAdd(BigDecimalInt other)
+        private readonly BigDecimalInt AbsAdd(BigDecimalInt other)
         {
             int len1 = _contrainer.Length;
             int len2 = other._contrainer.Length;
@@ -91,7 +91,7 @@ namespace BigNumbers
             return new BigDecimalInt(newValue, _contrainer.Sign);
         }
 
-        private BigDecimalInt AbsSub(BigDecimalInt other)
+        private readonly BigDecimalInt AbsSub(BigDecimalInt other)
         {
             int len1 = _contrainer.Length;
             int len2 = other._contrainer.Length;
@@ -128,7 +128,7 @@ namespace BigNumbers
             return new BigDecimalInt(newValue, c > 0 ? _contrainer.Sign : Utitility.InvertSign(_contrainer.Sign));
         }
 
-        private BigDecimalInt AbsMult(BigDecimalInt other, Sign sign)
+        private readonly BigDecimalInt AbsMult(BigDecimalInt other, Sign sign)
         {
             int len1 = _contrainer.Length;
             int len2 = other._contrainer.Length;
@@ -197,9 +197,9 @@ namespace BigNumbers
         private static int AbsCompare(BigDecimalInt left, BigDecimalInt right)
             => BigIntContrainer<uint>.AbsCompare(left._contrainer, right._contrainer);
 
-        public bool Equals(BigDecimalInt other) => CompareTo(other) == 0;
+        public readonly bool Equals(BigDecimalInt other) => CompareTo(other) == 0;
 
-        public int CompareTo(BigDecimalInt other)
+        public readonly int CompareTo(BigDecimalInt other)
         {
             Sign r = other._contrainer.Sign;
             Sign l = _contrainer.Sign;
