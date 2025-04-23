@@ -7,6 +7,8 @@ namespace BigNumbersTests
         [Theory]
         [InlineData(4, "4")]
         [InlineData(-4, "-4")]
+        [InlineData(1_000_000_000, "1000000000")]
+        [InlineData(0, "0")]
         public void ToStringTest(int value, string expectedS)
         {
             Assert.Equal(expectedS,new BigDecimalInt(value).ToString());
@@ -42,9 +44,11 @@ namespace BigNumbersTests
         [Theory]
         [InlineData(0, 0, true)]
         [InlineData(0, 1, false)]
+        [InlineData(1_000_000_000, 1_000_000_000, true)]
         public void TestEqual(int left, int right, bool result)
         {
-            Assert.Equal(left == right, result);
+            Assert.Equal(new BigDecimalInt(left) == new BigDecimalInt(right), result);
+            Assert.Equal(new BigDecimalInt(left) != new BigDecimalInt(right), !result);
         }
 
         [Theory]

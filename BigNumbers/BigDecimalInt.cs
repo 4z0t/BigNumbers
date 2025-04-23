@@ -11,6 +11,25 @@ namespace BigNumbers
 {
     public struct BigDecimalInt : IEquatable<BigDecimalInt>, IComparable<BigDecimalInt>//, INumber<BigDecimalInt>
     {
+        public static uint Pow10(int n)
+        {
+            uint result = 1;
+	        for (int i = 0; i < n; i++)
+		        result *= 10;
+	        return result;
+        }
+
+        private static int NumLen(uint n)
+        {
+            int length = 0;
+            while (n != 0)
+            {
+                n /= 10;
+                length++;
+            }
+            return length;
+        }
+
         public const uint Base = 1_000_000_000;
 
         public static readonly BigDecimalInt Zero = new BigDecimalInt([0], Sign.Positive);
@@ -167,6 +186,11 @@ namespace BigNumbers
 
         public static bool operator ==(BigDecimalInt left, BigDecimalInt right) => left.Equals(right);
         public static bool operator !=(BigDecimalInt left, BigDecimalInt right) => !(left == right);
+        public static bool operator >(BigDecimalInt left, BigDecimalInt right) => left.CompareTo(right) == 1;
+        public static bool operator >=(BigDecimalInt left, BigDecimalInt right) => left.CompareTo(right) >= 0;
+        public static bool operator <(BigDecimalInt left, BigDecimalInt right) => left.CompareTo(right) == -1;
+        public static bool operator <=(BigDecimalInt left, BigDecimalInt right) => left.CompareTo(right) <= 0;
+
         public static BigDecimalInt operator +(BigDecimalInt left, BigDecimalInt right)
         {
             if (left._contrainer.Sign == right._contrainer.Sign)
@@ -178,7 +202,6 @@ namespace BigNumbers
                 return left.AbsSub(right);
             }
         }
-
         public static BigDecimalInt operator -(BigDecimalInt left, BigDecimalInt right)
         {
             if (left._contrainer.Sign == right._contrainer.Sign)
@@ -190,9 +213,75 @@ namespace BigNumbers
                 return left.AbsAdd(right);
             }
         }
-
         public static BigDecimalInt operator *(BigDecimalInt left, BigDecimalInt right)
             => left.AbsMult(right, Utitility.MultSigns(left._contrainer.Sign, right._contrainer.Sign));
+
+        public (BigDecimalInt Quotiont, BigDecimalInt Reminder) DivRem(BigDecimalInt other)
+        {
+            if (other._contrainer.IsZero)
+                throw new DivideByZeroException();
+
+            BigDecimalInt numerator = Abs(this);
+
+            BigDecimalInt result = One;
+
+            while(true)
+            {
+                BigDecimalInt divider = Abs(other);
+                if (divider > numerator)
+                    break;
+
+                BigDecimalInt step = One;
+                int dist = numerator.Distance(divider) - 1;
+                while(numerator >= divider.DecimalShift(dist))
+                {
+                    dist++;
+                }
+
+                divider = divider.DecimalShift(dist - 1);
+                step = step.DecimalShift(dist - 1);
+
+                while (numerator >= divider)
+                {
+                    numerator -= divider;
+                    result += step;
+                }
+            }
+
+            return (result, numerator);
+        }
+
+        public static BigDecimalInt operator /(BigDecimalInt left, BigDecimalInt right)
+        {
+            var (q, r) = left.DivRem(right);
+            return q;
+        }
+        public static BigDecimalInt operator %(BigDecimalInt left, BigDecimalInt right)
+        {
+            var (q, r) = left.DivRem(right);
+            return r;
+        }
+
+        public readonly BigDecimalInt DecimalShift(int times)
+        {
+            var (q, r) = Math.DivRem(times, 9);
+            uint ls = Pow10(9 - r);
+            uint rs = Pow10(r);
+
+            uint[] newValue = new uint[_contrainer.Length + q + 1];
+
+            for (int i = 0; i < _contrainer.Length; i++)
+            {
+                newValue[i + q] += (_contrainer[i] % ls) * rs;
+                newValue[i + q + 1] += _contrainer[i] / ls;
+            }
+
+            return new BigDecimalInt(newValue, _contrainer.Sign);
+        }
+
+        public readonly int Distance(BigDecimalInt other)
+            => (_contrainer.Length - other._contrainer.Length) * 9 + NumLen(_contrainer[_contrainer.Length - 1]) - NumLen(other._contrainer[other._contrainer.Length - 1]);
+
 
         public override readonly string ToString()
         {
@@ -230,11 +319,17 @@ namespace BigNumbers
             return r == Sign.Positive ? c : -c;
         }
 
-        private BigIntContrainer<uint> _contrainer;
-
         public override readonly bool Equals(object obj)
         {
             return obj is BigDecimalInt i && Equals(i);
         }
+
+        public static BigDecimalInt Abs(BigDecimalInt value)
+            => value._contrainer.Sign == Sign.Positive 
+            ? value
+            : new BigDecimalInt(value._contrainer.CopyData(), Sign.Positive);
+
+
+        private BigIntContrainer<uint> _contrainer;
     }
 }
