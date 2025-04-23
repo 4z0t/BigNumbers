@@ -45,7 +45,14 @@ namespace BigNumbersTests
         [InlineData(-2, 3, -6)]
         [InlineData(-2, -3, 6)]
         [InlineData(2, -3, -6)]
-        public void MultTest(int left, int right, int result)
+        public void MultTestInt(int left, int right, int result)
+        {
+            Assert.Equal(new BigDecimalInt(left) * new BigDecimalInt(right), new BigDecimalInt(result));
+        }
+
+        [Theory]
+        [InlineData(999_999_999, 999_999_999, 999_999_998_000_000_001)]
+        public void MultTestLong(long left, long right, long result)
         {
             Assert.Equal(new BigDecimalInt(left) * new BigDecimalInt(right), new BigDecimalInt(result));
         }

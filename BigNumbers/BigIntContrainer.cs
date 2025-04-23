@@ -17,7 +17,7 @@ namespace BigNumbers
 
     public static class Utitility
     {
-        public static Sign SignOf(int value) => value >= 0 ? Sign.Positive : Sign.Negative;
+        public static Sign SignOf<T>(T value) where T : INumber<T> => T.IsNegative(value) ? Sign.Negative : Sign.Positive;
         public static Sign InvertSign(Sign sign) => sign == Sign.Positive? Sign.Negative: Sign.Positive;
         public static Sign MultSigns(Sign left, Sign right) => left == right ? Sign.Positive : Sign.Negative;
 

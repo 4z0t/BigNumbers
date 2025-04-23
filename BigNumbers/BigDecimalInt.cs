@@ -33,6 +33,16 @@ namespace BigNumbers
             _contrainer = new BigIntContrainer<uint>([r.reminder, r.quotient], Sign.Positive);
         }
 
+        public BigDecimalInt(long value)
+        {
+            long q, r1, r2, r3;
+            (q, r1) = Math.DivRem(Math.Abs(value), Base);
+            (q, r2) = Math.DivRem(q, Base);
+            (q, r3) = Math.DivRem(q, Base);
+
+            _contrainer = new BigIntContrainer<uint>([(uint)r1, (uint)r2, (uint)r3], Utitility.SignOf(value));
+        }
+
         public BigDecimalInt(BigDecimalInt other)
         {
             _contrainer = new BigIntContrainer<uint>(other._contrainer);
