@@ -176,6 +176,9 @@ namespace BigNumbers
             }
         }
 
+        public static BigDecimalInt operator *(BigDecimalInt left, BigDecimalInt right)
+            => left.AbsMult(right, Utitility.MultSigns(left._contrainer.Sign, right._contrainer.Sign));
+
         public override readonly string ToString()
         {
             StringBuilder builder = new(_contrainer.Length + 1);

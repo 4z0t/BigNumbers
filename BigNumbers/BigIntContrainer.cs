@@ -19,6 +19,7 @@ namespace BigNumbers
     {
         public static Sign SignOf(int value) => value >= 0 ? Sign.Positive : Sign.Negative;
         public static Sign InvertSign(Sign sign) => sign == Sign.Positive? Sign.Negative: Sign.Positive;
+        public static Sign MultSigns(Sign left, Sign right) => left == right ? Sign.Positive : Sign.Negative;
 
     }
 
