@@ -115,7 +115,7 @@ namespace BigNumbersTests
 
         public void StringParseTest(string s, long value)
         {
-            Assert.Equal(new BigDecimalInt(s), new BigDecimalInt(value));
+            Assert.Equal(new BigDecimalInt(value), new BigDecimalInt(s));
         }
 
 
