@@ -318,7 +318,7 @@ namespace BigNumbers
         }
 
         public static BigDecimalInt Parse(string s)
-            => s.StartsWith("-")
+            => s.StartsWith('-')
                 ? new BigDecimalInt(ParseStringToValueArray(s.Substring(1)), Sign.Negative)
                 : new BigDecimalInt(ParseStringToValueArray(s), Sign.Positive);
 
