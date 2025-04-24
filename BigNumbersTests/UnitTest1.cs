@@ -11,7 +11,7 @@ namespace BigNumbersTests
         [InlineData(0, "0")]
         public void ToStringTest(int value, string expectedS)
         {
-            Assert.Equal(expectedS,new BigDecimalInt(value).ToString());
+            Assert.Equal(expectedS, new BigDecimalInt(value).ToString());
         }
 
         [Theory]
@@ -24,7 +24,7 @@ namespace BigNumbersTests
         [InlineData(1, 999_999_999, 1_000_000_000)]
         public void AddTest(int left, int right, int result)
         {
-            Assert.Equal(new BigDecimalInt(left)+ new BigDecimalInt(right), new BigDecimalInt(result));
+            Assert.Equal(new BigDecimalInt(left) + new BigDecimalInt(right), new BigDecimalInt(result));
         }
 
         [Theory]
@@ -98,6 +98,21 @@ namespace BigNumbersTests
         public void DecimalShiftTest(int value, int shift, long result)
         {
             Assert.Equal(new BigDecimalInt(value).DecimalShift(shift), new BigDecimalInt(result));
+        }
+
+
+        [Theory]
+        [InlineData("1", 1)]
+        [InlineData("-1", -1)]
+        [InlineData("0", 0)]
+        [InlineData("-0", 0)]
+        [InlineData("1000000000", 1_000_000_000)]
+        [InlineData("-1000000000", -1_000_000_000)]
+        [InlineData("10123456789", 10_123_456_789)]
+
+        public void StringParseTest(string s, long value)
+        {
+            Assert.Equal(new BigDecimalInt(s), new BigDecimalInt(value));
         }
 
 

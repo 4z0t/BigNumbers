@@ -5,6 +5,7 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BigNumbers
@@ -14,9 +15,9 @@ namespace BigNumbers
         public static uint Pow10(int n)
         {
             uint result = 1;
-	        for (int i = 0; i < n; i++)
-		        result *= 10;
-	        return result;
+            for (int i = 0; i < n; i++)
+                result *= 10;
+            return result;
         }
 
         private static int NumLen(uint n)
@@ -67,6 +68,10 @@ namespace BigNumbers
         public BigDecimalInt(BigDecimalInt other)
         {
             _contrainer = new BigIntContrainer<uint>(other._contrainer);
+        }
+
+        public BigDecimalInt(string value) : this(Parse(value))
+        {
         }
 
         private BigDecimalInt(uint[] value, Sign sign)
@@ -152,7 +157,7 @@ namespace BigNumbers
                             break;
                     }
                     newValue[j] -= 1;
-                   newValue[i] += Base - small._contrainer[i];
+                    newValue[i] += Base - small._contrainer[i];
                 }
 
             return new BigDecimalInt(newValue, c > 0 ? _contrainer.Sign : Utitility.InvertSign(_contrainer.Sign));
@@ -230,7 +235,7 @@ namespace BigNumbers
 
             BigDecimalInt result = Zero;
 
-            while(true)
+            while (true)
             {
                 BigDecimalInt divider = Abs(other);
                 if (divider > numerator)
@@ -238,7 +243,7 @@ namespace BigNumbers
 
                 BigDecimalInt step = One;
                 int dist = numerator.Distance(divider);
-                while(numerator >= divider.DecimalShift(dist))
+                while (numerator >= divider.DecimalShift(dist))
                 {
                     dist++;
                 }
@@ -306,6 +311,38 @@ namespace BigNumbers
         private static int AbsCompare(BigDecimalInt left, BigDecimalInt right)
             => BigIntContrainer<uint>.AbsCompare(left._contrainer, right._contrainer);
 
+        public static bool TryParse(string s, out BigDecimalInt result)
+        {
+            result = Zero;
+            return false;
+        }
+
+        public static BigDecimalInt Parse(string s)
+        {
+            if (s.StartsWith("-"))
+                return new BigDecimalInt(ParseStringToValueArray(s.Substring(1)), Sign.Negative);
+            return new BigDecimalInt(ParseStringToValueArray(s), Sign.Positive);
+        }
+
+        private static uint[] ParseStringToValueArray(string s)
+        {
+            Regex regex = new Regex(@"^\d+$");
+            if (!regex.IsMatch(s))
+                throw new Exception();
+
+            int length = s.Length;
+            List<uint> chunks = new List<uint>(length / 9);
+
+            for (int i = length; i > 0; i -= 9)
+            {
+                int start = Math.Max(0, i - 9);
+                int count = i - start;
+                chunks.Add(uint.Parse(s.Substring(start, count)));
+            }
+
+            return chunks.ToArray();
+        }
+
         public readonly bool Equals(BigDecimalInt other) => CompareTo(other) == 0;
 
         public readonly int CompareTo(BigDecimalInt other)
@@ -330,7 +367,7 @@ namespace BigNumbers
         }
 
         public static BigDecimalInt Abs(BigDecimalInt value)
-            => value._contrainer.Sign == Sign.Positive 
+            => value._contrainer.Sign == Sign.Positive
             ? value
             : new BigDecimalInt(value._contrainer.CopyData(), Sign.Positive);
 
