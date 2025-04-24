@@ -318,11 +318,9 @@ namespace BigNumbers
         }
 
         public static BigDecimalInt Parse(string s)
-        {
-            if (s.StartsWith("-"))
-                return new BigDecimalInt(ParseStringToValueArray(s.Substring(1)), Sign.Negative);
-            return new BigDecimalInt(ParseStringToValueArray(s), Sign.Positive);
-        }
+            => s.StartsWith("-")
+                ? new BigDecimalInt(ParseStringToValueArray(s.Substring(1)), Sign.Negative)
+                : new BigDecimalInt(ParseStringToValueArray(s), Sign.Positive);
 
         private static uint[] ParseStringToValueArray(string s)
         {

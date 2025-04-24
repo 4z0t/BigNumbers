@@ -103,8 +103,11 @@ namespace BigNumbersTests
 
         [Theory]
         [InlineData("1", 1)]
+        [InlineData("01", 1)]
+        [InlineData("0000000000000000000001", 1)]
         [InlineData("-1", -1)]
         [InlineData("0", 0)]
+        [InlineData("00000000000000000000000", 0)]
         [InlineData("-0", 0)]
         [InlineData("1000000000", 1_000_000_000)]
         [InlineData("-1000000000", -1_000_000_000)]
