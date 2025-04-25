@@ -2,7 +2,7 @@
 
 namespace BigNumbersTests
 {
-    public class UnitTest1
+    public class BigDecimalInt
     {
         [Theory]
         [InlineData(4, "4")]
@@ -11,7 +11,7 @@ namespace BigNumbersTests
         [InlineData(0, "0")]
         public void ToStringTest(int value, string expectedS)
         {
-            Assert.Equal(expectedS, new BigDecimalInt(value).ToString());
+            Assert.Equal(expectedS, new BigNumbers.BigDecimalInt(value).ToString());
         }
 
         [Theory]
@@ -24,7 +24,7 @@ namespace BigNumbersTests
         [InlineData(1, 999_999_999, 1_000_000_000)]
         public void AddTest(int left, int right, int result)
         {
-            Assert.Equal(new BigDecimalInt(left) + new BigDecimalInt(right), new BigDecimalInt(result));
+            Assert.Equal(new BigNumbers.BigDecimalInt(left) + new BigNumbers.BigDecimalInt(right), new BigNumbers.BigDecimalInt(result));
         }
 
         [Theory]
@@ -38,7 +38,7 @@ namespace BigNumbersTests
         [InlineData(999_999_999, 1_000_000_000, -1)]
         public void SubTest(int left, int right, int result)
         {
-            Assert.Equal(new BigDecimalInt(left) - new BigDecimalInt(right), new BigDecimalInt(result));
+            Assert.Equal(new BigNumbers.BigDecimalInt(left) - new BigNumbers.BigDecimalInt(right), new BigNumbers.BigDecimalInt(result));
         }
 
         [Theory]
@@ -47,8 +47,8 @@ namespace BigNumbersTests
         [InlineData(1_000_000_000, 1_000_000_000, true)]
         public void TestEqual(int left, int right, bool result)
         {
-            Assert.Equal(new BigDecimalInt(left) == new BigDecimalInt(right), result);
-            Assert.Equal(new BigDecimalInt(left) != new BigDecimalInt(right), !result);
+            Assert.Equal(new BigNumbers.BigDecimalInt(left) == new BigNumbers.BigDecimalInt(right), result);
+            Assert.Equal(new BigNumbers.BigDecimalInt(left) != new BigNumbers.BigDecimalInt(right), !result);
         }
 
         [Theory]
@@ -60,7 +60,7 @@ namespace BigNumbersTests
         [InlineData(2, -3, -6)]
         public void MultTestInt(int left, int right, int result)
         {
-            Assert.Equal(new BigDecimalInt(left) * new BigDecimalInt(right), new BigDecimalInt(result));
+            Assert.Equal(new BigNumbers.BigDecimalInt(left) * new BigNumbers.BigDecimalInt(right), new BigNumbers.BigDecimalInt(result));
         }
 
         [Theory]
@@ -68,7 +68,7 @@ namespace BigNumbersTests
         [InlineData(999_999_999, -999_999_999, -999_999_998_000_000_001)]
         public void MultTestLong(long left, long right, long result)
         {
-            Assert.Equal(new BigDecimalInt(left) * new BigDecimalInt(right), new BigDecimalInt(result));
+            Assert.Equal(new BigNumbers.BigDecimalInt(left) * new BigNumbers.BigDecimalInt(right), new BigNumbers.BigDecimalInt(result));
         }
 
         [Theory]
@@ -79,7 +79,7 @@ namespace BigNumbersTests
         [InlineData(1_000_000_000, 10, 100_000_000)]
         public void DivTestLong(long left, long right, long result)
         {
-            Assert.Equal(new BigDecimalInt(left) / new BigDecimalInt(right), new BigDecimalInt(result));
+            Assert.Equal(new BigNumbers.BigDecimalInt(left) / new BigNumbers.BigDecimalInt(right), new BigNumbers.BigDecimalInt(result));
         }
 
         [Theory]
@@ -88,7 +88,7 @@ namespace BigNumbersTests
         [InlineData(1_000_000_000, 999_999_999, 1)]
         public void RemTestLong(long left, long right, long result)
         {
-            Assert.Equal(new BigDecimalInt(left) % new BigDecimalInt(right), new BigDecimalInt(result));
+            Assert.Equal(new BigNumbers.BigDecimalInt(left) % new BigNumbers.BigDecimalInt(right), new BigNumbers.BigDecimalInt(result));
         }
 
         [Theory]
@@ -97,7 +97,7 @@ namespace BigNumbersTests
         [InlineData(1, 10, 10_000_000_000)]
         public void DecimalShiftTest(int value, int shift, long result)
         {
-            Assert.Equal(new BigDecimalInt(value).DecimalShift(shift), new BigDecimalInt(result));
+            Assert.Equal(new BigNumbers.BigDecimalInt(value).DecimalShift(shift), new BigNumbers.BigDecimalInt(result));
         }
 
 
@@ -115,7 +115,7 @@ namespace BigNumbersTests
 
         public void StringParseTest(string s, long value)
         {
-            Assert.Equal(new BigDecimalInt(value), new BigDecimalInt(s));
+            Assert.Equal(new BigNumbers.BigDecimalInt(value), new BigNumbers.BigDecimalInt(s));
         }
 
 
