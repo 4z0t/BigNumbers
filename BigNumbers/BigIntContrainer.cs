@@ -36,8 +36,19 @@ namespace BigNumbers
 
     internal class BigIntContrainer<T> where T : struct, INumber<T>
     {
-        public BigIntContrainer(T[] value, Sign sign) : this(new ReadOnlySpan<T>(value), sign)
+        public BigIntContrainer(T[] value, Sign sign)
         {
+            _sign = sign;
+            _numLen = 1;
+            for (int i = value.Length - 1; i >= 0; --i)
+            {
+                if (value[i] != default)
+                {
+                    _numLen = i + 1;
+                    break;
+                }
+            }
+            _num = value;
         }
         public BigIntContrainer(ReadOnlySpan<T> value, Sign sign)
         {
