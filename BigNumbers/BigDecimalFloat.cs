@@ -27,15 +27,23 @@ namespace BigNumbers
         {
         }
 
+        public BigDecimalFloat(BigDecimalInt integerPart, BigDecimalInt fractionalPart)
+            : this(integerPart.CellsLeftShift(fractionalPart.Length) + fractionalPart, (uint)fractionalPart.Length, false)
+        {
+        }
+
         public BigDecimalFloat(BigDecimalInt value, uint precision) :this(value, precision, true)
         {
         }
 
         private BigDecimalFloat(BigDecimalInt value, uint precision, bool makeShift)
         {
-            _value = makeShift ? value.CellsLeftShift(precision) : value;
+            _value = makeShift ? value.CellsLeftShift((int)precision) : value;
             _precision = precision;
         }
+
+        public static BigDecimalFloat BigIntAsFloat(BigDecimalInt bigInt, uint precision = DefaultPrecision)
+            => new BigDecimalFloat(bigInt, precision, false);
 
         public static BigDecimalFloat Parse(string s)
         {

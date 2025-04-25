@@ -87,6 +87,7 @@ namespace BigNumbers
         public readonly bool IsZero => _contrainer.IsZero;
         public readonly ReadOnlySpan<uint> Value => _contrainer.Value;
         public readonly Sign Sign => _contrainer.Sign;
+        public readonly int Length => _contrainer.Length;
 
         private readonly BigDecimalInt AbsAdd(BigDecimalInt other)
         {
@@ -296,7 +297,7 @@ namespace BigNumbers
             return new BigDecimalInt(newValue, _contrainer.Sign);
         }
 
-        public readonly BigDecimalInt CellsRightShift(uint cells)
+        public readonly BigDecimalInt CellsRightShift(int cells)
         {
             if (cells == 0)
                 return this;
@@ -306,19 +307,19 @@ namespace BigNumbers
 
             uint[] newValue = new uint[_contrainer.Length - cells];
 
-            _contrainer.Value.Slice((int)cells).CopyTo(newValue);
+            _contrainer.Value.Slice(cells).CopyTo(newValue);
 
             return new BigDecimalInt(newValue, _contrainer.Sign);
         }
 
-        public readonly BigDecimalInt CellsLeftShift(uint cells)
+        public readonly BigDecimalInt CellsLeftShift(int cells)
         {
             if (cells == 0)
                 return this;
 
             uint[] newValue = new uint[_contrainer.Length + cells];
 
-            _contrainer.Value.CopyTo(newValue.AsSpan().Slice((int)cells));
+            _contrainer.Value.CopyTo(newValue.AsSpan().Slice(cells));
 
             return new BigDecimalInt(newValue, _contrainer.Sign);
         }
