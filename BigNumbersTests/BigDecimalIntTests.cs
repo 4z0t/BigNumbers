@@ -2,7 +2,7 @@
 
 namespace BigNumbersTests
 {
-    public class BigDecimalInt
+    public class BigDecimalIntTest
     {
         [Theory]
         [InlineData(4, "4")]
@@ -11,7 +11,7 @@ namespace BigNumbersTests
         [InlineData(0, "0")]
         public void ToStringTest(int value, string expectedS)
         {
-            Assert.Equal(expectedS, new BigNumbers.BigDecimalInt(value).ToString());
+            Assert.Equal(expectedS, new BigDecimalInt(value).ToString());
         }
 
         [Theory]
@@ -24,7 +24,7 @@ namespace BigNumbersTests
         [InlineData(1, 999_999_999, 1_000_000_000)]
         public void AddTest(int left, int right, int result)
         {
-            Assert.Equal(new BigNumbers.BigDecimalInt(left) + new BigNumbers.BigDecimalInt(right), new BigNumbers.BigDecimalInt(result));
+            Assert.Equal(new BigDecimalInt(left) + new BigNumbers.BigDecimalInt(right), new BigNumbers.BigDecimalInt(result));
         }
 
         [Theory]
@@ -97,7 +97,24 @@ namespace BigNumbersTests
         [InlineData(1, 10, 10_000_000_000)]
         public void DecimalShiftTest(int value, int shift, long result)
         {
-            Assert.Equal(new BigNumbers.BigDecimalInt(value).DecimalShift(shift), new BigNumbers.BigDecimalInt(result));
+            Assert.Equal(new BigNumbers.BigDecimalInt(value).DecimalLeftShift(shift), new BigNumbers.BigDecimalInt(result));
+        }
+
+        [Theory]
+        [InlineData(10_000_000_000, 0, 10_000_000_000)]
+        [InlineData(1,1,0)]
+        [InlineData(10_000_000_000, 1, 10)]
+        public void CellsRightShiftTest(long value, int shift, long result)
+        {
+            Assert.Equal(new BigNumbers.BigDecimalInt(result), new BigNumbers.BigDecimalInt(value).CellsRightShift(shift));
+        }
+
+        [Theory]
+        [InlineData("10123456789000000000", 1, 10_123_456_789)]
+        [InlineData("10123456789000000000", 2, 10)]
+        public void CellsRightShiftStringTest(string value, int shift, long result)
+        {
+            Assert.Equal(new BigDecimalInt(result), new BigDecimalInt(value).CellsRightShift(shift));
         }
 
 

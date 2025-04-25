@@ -79,6 +79,11 @@ namespace BigNumbers
             _contrainer = new BigIntContrainer<uint>(value, sign);
         }
 
+        private BigDecimalInt(ReadOnlySpan<uint> value, Sign sign)
+        {
+            _contrainer = new BigIntContrainer<uint>(value, sign);
+        }
+
         public readonly bool IsZero => _contrainer.IsZero;
 
         private readonly BigDecimalInt AbsAdd(BigDecimalInt other)
@@ -139,7 +144,7 @@ namespace BigNumbers
 
             BigDecimalInt large = c > 0 ? this : other;
             BigDecimalInt small = c > 0 ? other : this;
-            uint[] newValue = large._contrainer.CopyData();
+            uint[] newValue = large._contrainer.Values.ToArray();
 
             for (int i = 0; i < small._contrainer.Length; i++)
                 if (newValue[i] >= small._contrainer[i])
@@ -224,7 +229,7 @@ namespace BigNumbers
             => left.AbsMult(right, Utitility.MultSigns(left._contrainer.Sign, right._contrainer.Sign));
 
         public static BigDecimalInt operator -(BigDecimalInt value)
-            => new BigDecimalInt(value._contrainer.CopyData(), Utitility.InvertSign(value._contrainer.Sign));
+            => new BigDecimalInt(value._contrainer.Values, Utitility.InvertSign(value._contrainer.Sign));
 
         public (BigDecimalInt Quotiont, BigDecimalInt Reminder) DivRem(BigDecimalInt other)
         {
@@ -243,13 +248,13 @@ namespace BigNumbers
 
                 BigDecimalInt step = One;
                 int dist = numerator.Distance(divider);
-                while (numerator >= divider.DecimalShift(dist))
+                while (numerator >= divider.DecimalLeftShift(dist))
                 {
                     dist++;
                 }
 
-                divider = divider.DecimalShift(dist - 1);
-                step = step.DecimalShift(dist - 1);
+                divider = divider.DecimalLeftShift(dist - 1);
+                step = step.DecimalLeftShift(dist - 1);
 
                 while (numerator >= divider)
                 {
@@ -272,7 +277,7 @@ namespace BigNumbers
             return r;
         }
 
-        public readonly BigDecimalInt DecimalShift(int times)
+        public readonly BigDecimalInt DecimalLeftShift(int times)
         {
             var (q, r) = Math.DivRem(times, 9);
             uint ls = Pow10(9 - r);
@@ -285,6 +290,21 @@ namespace BigNumbers
                 newValue[i + q] += (_contrainer[i] % ls) * rs;
                 newValue[i + q + 1] += _contrainer[i] / ls;
             }
+
+            return new BigDecimalInt(newValue, _contrainer.Sign);
+        }
+
+        public readonly BigDecimalInt CellsRightShift(int cells)
+        {
+            if (cells == 0)
+                return this;
+
+            if (_contrainer.Length <= cells)
+                return Zero;
+
+            uint[] newValue = new uint[_contrainer.Length - cells];
+
+            _contrainer.Values.Slice(cells).CopyTo(newValue);
 
             return new BigDecimalInt(newValue, _contrainer.Sign);
         }
@@ -371,7 +391,7 @@ namespace BigNumbers
         public static BigDecimalInt Abs(BigDecimalInt value)
             => value._contrainer.Sign == Sign.Positive
             ? value
-            : new BigDecimalInt(value._contrainer.CopyData(), Sign.Positive);
+            : new BigDecimalInt(value._contrainer.Values, Sign.Positive);
 
 
         private readonly BigIntContrainer<uint> _contrainer;

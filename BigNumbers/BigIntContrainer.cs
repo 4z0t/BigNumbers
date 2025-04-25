@@ -51,11 +51,26 @@ namespace BigNumbers
             }
         }
 
+        public BigIntContrainer(ReadOnlySpan<T> value, Sign sign)
+        {
+            _sign = sign;
+            _numLen = 1;
+            for (int i = value.Length - 1; i >= 0; --i)
+            {
+                if (value[i] != default)
+                {
+                    _numLen = i + 1;
+                    break;
+                }
+            }
+            _num = value.Slice(0, _numLen).ToArray();
+        }
+
         public BigIntContrainer(BigIntContrainer<T> contrainer)
         {
             _sign = contrainer.Sign;
             _numLen = contrainer.Length;
-            _num = contrainer.CopyData();
+            _num = contrainer._num;
         }
 
         public int Length => _numLen;
@@ -84,12 +99,7 @@ namespace BigNumbers
             return 0;
         }
 
-        public T[] CopyData()
-        {
-            T[] data = new T[Length];
-            Array.Copy(_num, data, Length);
-            return data;
-        }
+        public ReadOnlySpan<T> Values => new ReadOnlySpan<T>(_num).Slice(0, _numLen);
 
         private readonly T[] _num;
         private readonly int _numLen;
