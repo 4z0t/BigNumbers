@@ -85,6 +85,8 @@ namespace BigNumbers
         }
 
         public readonly bool IsZero => _contrainer.IsZero;
+        public readonly ReadOnlySpan<uint> Value => _contrainer.Value;
+        public readonly Sign Sign => _contrainer.Sign;
 
         private readonly BigDecimalInt AbsAdd(BigDecimalInt other)
         {
@@ -144,7 +146,7 @@ namespace BigNumbers
 
             BigDecimalInt large = c > 0 ? this : other;
             BigDecimalInt small = c > 0 ? other : this;
-            uint[] newValue = large._contrainer.Values.ToArray();
+            uint[] newValue = large._contrainer.Value.ToArray();
 
             for (int i = 0; i < small._contrainer.Length; i++)
                 if (newValue[i] >= small._contrainer[i])
@@ -229,7 +231,7 @@ namespace BigNumbers
             => left.AbsMult(right, Utitility.MultSigns(left._contrainer.Sign, right._contrainer.Sign));
 
         public static BigDecimalInt operator -(BigDecimalInt value)
-            => new BigDecimalInt(value._contrainer.Values, Utitility.InvertSign(value._contrainer.Sign));
+            => new BigDecimalInt(value._contrainer.Value, Utitility.InvertSign(value._contrainer.Sign));
 
         public (BigDecimalInt Quotiont, BigDecimalInt Reminder) DivRem(BigDecimalInt other)
         {
@@ -294,7 +296,7 @@ namespace BigNumbers
             return new BigDecimalInt(newValue, _contrainer.Sign);
         }
 
-        public readonly BigDecimalInt CellsRightShift(int cells)
+        public readonly BigDecimalInt CellsRightShift(uint cells)
         {
             if (cells == 0)
                 return this;
@@ -304,7 +306,19 @@ namespace BigNumbers
 
             uint[] newValue = new uint[_contrainer.Length - cells];
 
-            _contrainer.Values.Slice(cells).CopyTo(newValue);
+            _contrainer.Value.Slice((int)cells).CopyTo(newValue);
+
+            return new BigDecimalInt(newValue, _contrainer.Sign);
+        }
+
+        public readonly BigDecimalInt CellsLeftShift(uint cells)
+        {
+            if (cells == 0)
+                return this;
+
+            uint[] newValue = new uint[_contrainer.Length + cells];
+
+            _contrainer.Value.CopyTo(newValue.AsSpan().Slice((int)cells));
 
             return new BigDecimalInt(newValue, _contrainer.Sign);
         }
@@ -353,7 +367,7 @@ namespace BigNumbers
                 throw new Exception();
 
             int length = s.Length;
-            List<uint> chunks = new List<uint>(length / 9);
+            List<uint> chunks = new List<uint>(length / 9 + 1);
 
             for (int i = length; i > 0; i -= 9)
             {
@@ -391,7 +405,7 @@ namespace BigNumbers
         public static BigDecimalInt Abs(BigDecimalInt value)
             => value._contrainer.Sign == Sign.Positive
             ? value
-            : new BigDecimalInt(value._contrainer.Values, Sign.Positive);
+            : new BigDecimalInt(value._contrainer.Value, Sign.Positive);
 
 
         private readonly BigIntContrainer<uint> _contrainer;

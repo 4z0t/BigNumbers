@@ -104,7 +104,7 @@ namespace BigNumbersTests
         [InlineData(10_000_000_000, 0, 10_000_000_000)]
         [InlineData(1,1,0)]
         [InlineData(10_000_000_000, 1, 10)]
-        public void CellsRightShiftTest(long value, int shift, long result)
+        public void CellsRightShiftTest(long value, uint shift, long result)
         {
             Assert.Equal(new BigNumbers.BigDecimalInt(result), new BigNumbers.BigDecimalInt(value).CellsRightShift(shift));
         }
@@ -112,10 +112,20 @@ namespace BigNumbersTests
         [Theory]
         [InlineData("10123456789000000000", 1, 10_123_456_789)]
         [InlineData("10123456789000000000", 2, 10)]
-        public void CellsRightShiftStringTest(string value, int shift, long result)
+        public void CellsRightShiftStringTest(string value, uint shift, long result)
         {
             Assert.Equal(new BigDecimalInt(result), new BigDecimalInt(value).CellsRightShift(shift));
         }
+
+        [Theory]
+        [InlineData("10123456789", 0, "10123456789")]
+        [InlineData("10123456789", 1, "10123456789000000000")]
+        [InlineData("10123456789", 2, "10123456789000000000000000000")]
+        public void CellsLeftStringTest(string value, uint shift, string result)
+        {
+            Assert.Equal(new BigDecimalInt(result), new BigDecimalInt(value).CellsLeftShift(shift));
+        }
+
 
 
         [Theory]

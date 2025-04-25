@@ -50,6 +50,7 @@ namespace BigNumbers
             }
             _num = value;
         }
+
         public BigIntContrainer(ReadOnlySpan<T> value, Sign sign)
         {
             _sign = sign;
@@ -98,7 +99,7 @@ namespace BigNumbers
             return 0;
         }
 
-        public ReadOnlySpan<T> Values => new ReadOnlySpan<T>(_num).Slice(0, _numLen);
+        public ReadOnlySpan<T> Value => new ReadOnlySpan<T>(_num).Slice(0, _numLen);
 
         private readonly T[] _num;
         private readonly int _numLen;
