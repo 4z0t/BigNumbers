@@ -8,7 +8,7 @@ namespace BigNumbers
 {
     public readonly struct BigDecimalFloat
     {
-        public const uint DefaultPrecision = 10;
+        public const int DefaultPrecision = 10;
 
 
         public BigDecimalFloat()
@@ -28,22 +28,71 @@ namespace BigNumbers
         }
 
         public BigDecimalFloat(BigDecimalInt integerPart, BigDecimalInt fractionalPart)
-            : this(integerPart.CellsLeftShift(fractionalPart.Length) + fractionalPart, (uint)fractionalPart.Length, false)
+            : this(integerPart.CellsLeftShift(fractionalPart.Length) + fractionalPart, fractionalPart.Length, false)
         {
         }
 
-        public BigDecimalFloat(BigDecimalInt value, uint precision) :this(value, precision, true)
+        public BigDecimalFloat(BigDecimalInt value, int precision) :this(value, precision, true)
         {
         }
 
-        private BigDecimalFloat(BigDecimalInt value, uint precision, bool makeShift)
+        private BigDecimalFloat(BigDecimalInt value, int precision, bool makeShift)
         {
-            _value = makeShift ? value.CellsLeftShift((int)precision) : value;
+            _value = makeShift ? value.CellsLeftShift(precision) : value;
             _precision = precision;
         }
 
-        public static BigDecimalFloat BigIntAsFloat(BigDecimalInt bigInt, uint precision = DefaultPrecision)
+        public static BigDecimalFloat BigIntAsFloat(BigDecimalInt bigInt, int precision = DefaultPrecision)
             => new BigDecimalFloat(bigInt, precision, false);
+
+        public static BigDecimalFloat operator +(BigDecimalFloat left, BigDecimalFloat right)
+        {
+            int leftP = left._precision;
+            int rightP = right._precision;
+
+            switch (leftP.CompareTo(right))
+            {
+                case 0:
+                    return BigIntAsFloat(left._value + right._value, leftP);
+                case > 0:
+                    return BigIntAsFloat(left._value.CellsRightShift(leftP - rightP) + right._value, rightP);
+                case < 0:
+                    return BigIntAsFloat(left._value + right._value.CellsRightShift(rightP - leftP), leftP);
+            }
+        }
+        public static BigDecimalFloat operator -(BigDecimalFloat left, BigDecimalFloat right)
+        {
+            int leftP = left._precision;
+            int rightP = right._precision;
+
+            switch (leftP.CompareTo(right))
+            {
+                case 0:
+                    return BigIntAsFloat(left._value - right._value, leftP);
+                case > 0:
+                    return BigIntAsFloat(left._value.CellsRightShift(leftP - rightP) - right._value, rightP);
+                case < 0:
+                    return BigIntAsFloat(left._value - right._value.CellsRightShift(rightP - leftP), leftP);
+            }
+        }
+
+        public static BigDecimalFloat operator *(BigDecimalFloat left, BigDecimalFloat right)
+        {
+            int leftP = left._precision;
+            int rightP = right._precision;
+            int p = leftP > rightP ? leftP : rightP;
+
+            return BigIntAsFloat((left._value * right._value).CellsRightShift(p), p);
+        }
+
+        public static BigDecimalFloat operator *(BigDecimalFloat left, BigDecimalInt right)
+            => BigIntAsFloat(left._value * right, left._precision);
+
+        public static BigDecimalFloat operator /(BigDecimalFloat left, BigDecimalFloat right) 
+            => BigIntAsFloat(left._value.CellsLeftShift(right._precision) / right._value, left._precision);
+
+        public static BigDecimalFloat operator /(BigDecimalFloat left, BigDecimalInt right)
+            => BigIntAsFloat(left._value / right, left._precision);
 
         public static BigDecimalFloat Parse(string s)
         {
@@ -52,7 +101,7 @@ namespace BigNumbers
                 return new BigDecimalFloat(new BigDecimalInt(s), DefaultPrecision, true);
             }
 
-
+            throw new NotImplementedException();
 
             return new BigDecimalFloat();
         }
@@ -60,7 +109,7 @@ namespace BigNumbers
         public readonly bool IsZero => _value.IsZero;
 
 
-        public override string ToString()
+        public readonly override string ToString()
         {
             ReadOnlySpan<uint> value = _value.Value;
 
@@ -116,6 +165,6 @@ namespace BigNumbers
 
 
         private readonly BigDecimalInt _value;
-        private readonly uint _precision;
+        private readonly int _precision;
     }
 }

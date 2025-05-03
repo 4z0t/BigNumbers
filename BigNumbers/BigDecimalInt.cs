@@ -243,6 +243,7 @@ namespace BigNumbers
 
             BigDecimalInt result = Zero;
 
+            //FIXME! Use preallocated memory for shifted values
             while (true)
             {
                 BigDecimalInt divider = Abs(other);
