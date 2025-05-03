@@ -17,5 +17,15 @@ namespace BigNumbersTests
         {
             Assert.Equal(expectedS, new BigDecimalFloat(new BigDecimalInt(value)).ToString());
         }
+
+        [Fact]
+        public void DivisionTests()
+        {
+            var five = new BigDecimalFloat(new BigDecimalInt(5), new BigDecimalInt(0));
+            var two = new BigDecimalFloat(new BigDecimalInt(2), new BigDecimalInt(0));
+            var twoPointFive = new BigDecimalFloat(new BigDecimalInt(2), new BigDecimalInt(500_000_000));
+            Assert.Equal(five / two, twoPointFive);
+            Assert.Equal("2.5", twoPointFive.ToString());
+        }
     }
 }

@@ -130,7 +130,7 @@ namespace BigNumbers
                 for (int i = value.Length - 1; i >= 0; i--)
                     builder.Append(value[i].ToString().PadLeft(9, '0'));
 
-                return builder.ToString();
+                return builder.ToString().TrimEnd('0');
             }
 
             builder.Append(value[value.Length - 1]);
@@ -158,9 +158,10 @@ namespace BigNumbers
             if (!afterPoint)
             {
                 builder.Append('0');
+                return builder.ToString();
             }
 
-            return builder.ToString();
+            return builder.ToString().TrimEnd('0');
         }
 
 
