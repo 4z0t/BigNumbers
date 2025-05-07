@@ -318,6 +318,9 @@ namespace BigNumbers
             if (cells == 0)
                 return this;
 
+            if (cells < 0)
+                throw new ArgumentException();
+
             uint[] newValue = new uint[_contrainer.Length + cells];
 
             _contrainer.Value.CopyTo(newValue.AsSpan().Slice(cells));
