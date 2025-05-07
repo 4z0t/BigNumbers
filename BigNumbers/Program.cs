@@ -18,3 +18,6 @@ Console.WriteLine(f);
 
 BigDecimalFloat f2 = new BigDecimalFloat(new BigDecimalInt(1), new BigDecimalInt(500_000_000));
 Console.WriteLine(f2);
+
+BigDecimalFloat f1 = new BigDecimalFloat(new BigDecimalInt(1), 4);
+Console.WriteLine(f1 / new BigDecimalInt(3));
